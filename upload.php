@@ -4,13 +4,13 @@
 <?php
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
          if(isset($_FILES['image'])){
-             //tao 1 array lưu biên slooix
+             //tao 1 array lưu error
              $errors = array();
 
              //kiểm tra file upload có đúng định dạng không.
              $allowed = array('image/jpg', 'image/jpeg', 'image/png', 'image/x-png');
 
-             //kiểm tra upload có đúng định dạng không.e
+             //kiểm tra upload có đúng định dạng không.
              if(in_array(strtolower($_FILES['image']['type']), $allowed)) {
 
                  //tach lay phan mo rong

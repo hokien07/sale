@@ -8,13 +8,13 @@ if(empty($_SESSION)) {
 }
 
 ?>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
+
+    <div class="row">
+            <div class="col-md-3">
                 <?php include "includes/sidebar.php"; ?>
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <div class="content">
 
                     <div class="khachhang-moi">
@@ -33,7 +33,7 @@ if(empty($_SESSION)) {
                         $count = 0;
                         while ($nhanvien = mysqli_fetch_array($r)):  ?>
                             <p>
-                                <button class="btn btn-primary" type="button" data-toggle="collapse"
+                                <button class="btn btn-default" type="button" data-toggle="collapse"
                                         data-target="#collapse-<?php echo $count ?>" aria-expanded="false"
                                         aria-controls="collapseExample" style="width: 100%; text-align: left">
                                     <?php echo $nhanvien['ten_NV'] . "---" . "0". $nhanvien['sdt_NV']; ?>
@@ -75,5 +75,5 @@ if(empty($_SESSION)) {
                 </div><!--/.content-admin-->
             </div>
         </div>
-    </div>
+
 <?php include "includes/footer.php"; ?>

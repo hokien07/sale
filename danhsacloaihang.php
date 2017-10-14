@@ -8,13 +8,13 @@ if(empty($_SESSION)) {
 }
 
 ?>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
+
+    <div class="row">
+            <div class="col-md-3">
                 <?php include "includes/sidebar.php"; ?>
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <div class="content">
 
                     <!--Tìm kiếm loại hàng-->
@@ -97,5 +97,5 @@ if(empty($_SESSION)) {
                 </div><!--/.content-admin-->
             </div>
         </div>
-    </div>
+
 <?php include "includes/footer.php"; ?>

@@ -39,6 +39,7 @@ if(empty($_SESSION)) {
                         $diachi_kh = mysqli_real_escape_string($dbc, $_POST['diachi-kh']);
                         $ttthem_kh = mysqli_real_escape_string($dbc, $_POST['ttthem-kh']);
 
+                        //kiểm tra chọn loại khách
                         if(!isset($_POST['loaikh'])){
                           $errors[]= 'loaikhach';
                         }else{
@@ -50,6 +51,16 @@ if(empty($_SESSION)) {
                               $loaikhach = 2;
                           }
                         }
+                        if($_SESSION['dang_nhap']['loai_user'] == 1){
+                          //kiểm tra chọn nhân viên cho khách
+                          if(!isset($_POST['chon-nv'])){
+                            $errors[]= 'chon-nv';
+                          }else{
+                            $id_nv = $_POST['chon-nv'];
+                          }
+                        }else {
+                          $id_nv = $_SESSION['dang_nhap']['id_NV'];
+                        }
 
                         $q = "UPDATE khachhang
                               SET
@@ -58,7 +69,8 @@ if(empty($_SESSION)) {
                                 email_KH = '{$email_kh}',
                                 diachi_KH = '{$diachi_kh}',
                                 ttthem_KH = '{$ttthem_kh}',
-                                loaikhach = {$loaikhach}
+                                loaikhach = {$loaikhach},
+                                id_NV = {$id_nv}
                               WHERE id_KH = $id_kh";
 
                         $r = mysqli_query($dbc, $q);
@@ -74,6 +86,11 @@ if(empty($_SESSION)) {
 
                         if (mysqli_affected_rows($dbc) == 1) {
                             $mes = "<p class='success'>Sửa Khách Hàng Thành Công!</p>";
+                            if($_SESSION['dang_nhap']['loai_user'] == 1){
+                              header("location:danhsachkhachhang.php");
+                            }else {
+                              header("location:nv_dskh.php");
+                            }
                         } else {
                             $mes = "<p class='warning'>Sửa Khách Hàng Không Thành Công. Vui lòng kiểm tra lại.</p>";
                         }
@@ -125,20 +142,21 @@ if(empty($_SESSION)) {
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4" style="margin-bottom: 10px;">
-                                <select name="chon-nv" id="chon-nv" style="height: 40px; width: 100%;">
-                                    <option>Chọn Nhân Viên</option>
-                                    <?php
-                                    $nv = "SELECT id_NV, ten_NV FROM nhanvien";
-                                    $r_nv = mysqli_query($dbc, $nv);
-                                    confirm_query($r_nv, $nv);
-                                    while($soNhanVien = mysqli_fetch_array($r_nv)) {
-                                        echo"<option value='{$soNhanVien['id_NV']}'> " .$soNhanVien['ten_NV']. "</option>";
-                                    }
-                                    ?>
-
-                                </select>
-                            </div>
+                            <?php if($_SESSION['dang_nhap']['loai_user'] == 1): ?>
+                              <div class="col-md-4" style="margin-bottom: 10px;">
+                                  <select name="chon-nv" id="chon-nv" style="height: 40px; width: 100%;">
+                                      <option>Chọn Nhân Viên</option>
+                                      <?php
+                                      $nv = "SELECT id_NV, ten_NV FROM nhanvien";
+                                      $r_nv = mysqli_query($dbc, $nv);
+                                      confirm_query($r_nv, $nv);
+                                      while($soNhanVien = mysqli_fetch_array($r_nv)) {
+                                          echo"<option value='{$soNhanVien['id_NV']}'> " .$soNhanVien['ten_NV']. "</option>";
+                                      }
+                                      ?>
+                                  </select>
+                              </div>
+                          <?php endif; ?>
 
                             <div class="col-md-4">
                               <?php if (isset($errors) && in_array("loaikhach", $errors, true)) {

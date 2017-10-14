@@ -15,208 +15,422 @@ if (empty($_SESSION)) {
 
     <div class="col-md-9">
         <div class="content">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="nhanvien">
-                        <?php
-                        $q_nv = "SELECT id_NV FROM nhanvien";
-                        $r_nv = mysqli_query($dbc, $q_nv);
-                        confirm_query($r_nv, $q_nv);
-                        $so_nv = 0;
-                        while ($row = mysqli_fetch_array($r_nv)) {
-                            $so_nv++;
-                        }
-                        echo "<p><strong><a href='danhsachnhanvien.php'>{$so_nv} Nhân Viên</a></strong></p>";
-                        ?>
-
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="khachhang">
-                        <?php
-                        $q_kh = "SELECT id_KH FROM khachhang";
-                        $r_kh = mysqli_query($dbc, $q_kh);
-                        confirm_query($r_kh, $q_kh);
-                        $so_kh = 0;
-                        while ($row = mysqli_fetch_array($r_kh)) {
-                            $so_kh++;
-                        }
-                        echo "<p><strong><a href='danhsachkhachhang.php'>{$so_kh} Khách Hàng</a></strong></p>";
-                        ?>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="loaihang">
-                        <?php
-                        $q_hang = "SELECT id_hang FROM Hang";
-                        $r_hang = mysqli_query($dbc, $q_hang);
-                        confirm_query($r_hang, $q_hang);
-                        $so_hang = 0;
-                        while ($row = mysqli_fetch_array($r_hang)) {
-                            $so_hang++;
-                        }
-                        echo "<p><strong><a href='danhsacloaihang.php'>{$so_hang} Loại Hàng</a></strong></p>";
-                        ?>
-                    </div>
-                </div>
-            </div>
-
             <div class="khachhang-moi">
                 <h2 style="text-transform: uppercase; text-align: center; padding-top: 20px; font-weight: bold; padding-bottom: 20px">
                     Tiến Độ</h2>
+                <?php
+                //phan trang
+
+                $display = 20;
+                $id_nv = $_SESSION['dang_nhap']['id_NV'];
+
+
+                //phan trang
+                if (isset($_GET['trang']) && filter_var($_GET['trang'], FILTER_VALIDATE_INT, array('min-range' => 1))) {
+                    $from = ($_GET['trang'] - 1) * $display;
+                } else {
+                    $from = 0;
+                }
+                ?>
 
                 <!--Chọn tháng-->
 
-                <div clas="rơ">
-                    <form method="post">
-                        <div class="col-md-4">
+                <form method="post">
+                    <div clas="row">
+                        <div class="col-md-6">
 
                             <select name="thang" id="thang"
-                                    style="width: 100%; height: 40px; background-color: #1e7e34; color: #fff; ">
+                                    style="width: 80%; height: 40px; background-color: #1e7e34; color: #fff; float:left;">
                                 <option value="0">Chọn Tháng</option>
                                 <?php
 
                                 $thang = 1;
-                                while ($thang <= 12) Ơ
-                                    echo "<option value='Ơ$thang}'";
-                                    ì (iét($_PÓTơ'thang'ư) && $_PÓTơ'thang'ư == $thang)
+                                while ($thang <= 12) {
+                                    echo "<option value='{$thang}'";
+                                    if (isset($_POST['thang']) && $_POST['thang'] == $thang)
                                         echo "selected = 'selected'";
-                                    echo ">Tháng Ơ$thang}</option>";
+                                    echo ">Tháng {$thang}</option>";
                                     $thang++;
-                                Ư
-                                ?>
-
+                                }
                                 ?>
                             </select>
-                            <div class="col-md-3">
-                                <input type="submit" name="submit" id="loai-kh" value="Chọn"
-                                       style="width: 100%; height: 40px; background-color: #1e7e34; color: #fff; margin-lèt: -15px; margin-bottom: 20px;">
-                            </div>
-                    </form>
-                </div>
-
-
-
-
+                            <input type="submit" name="submit" id="loai-kh" value="Chọn"
+                                   style="width: 20%; height: 40px; background-color: #1e7e34; color: #fff; margin-bottom: 20px;">
+                        </div>
+                    </div>
+                </form>
 
                 <!--Loc ngày và loại khách hàng-->
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item">
+                <ul class="nav nav-tabs" id="pills-tab" role="tablist">
+                    <li class="nav-item col-md-3">
                         <a class="nav-link active"
-                           id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
-                           aria-expanded="true">Mua</a>
+                           id="home-tab" data-toggle="tab" href="#mua" role="tab" aria-controls="home"
+                           aria-expanded="true" style="background-color: #0c5460; color: #fff;">Dự Án (
+                                <?php
+                                if (isset($_POST['submit'], $_POST['thang'])) {
+
+                                    $thang = $_POST['thang'];
+                                    $thang < 10 ? $thang = "0" . $thang : $thang = $thang;
+
+                                    $q_mua = "SELECT id_KH FROM khachhang WHERE loaikhach = 0 AND MONTH(ngay_them) = $thang";
+
+                                }else {
+                                    $q_mua = "SELECT id_KH FROM khachhang WHERE loaikhach = 0";
+                                }
+
+                                $r_mua = mysqli_num_rows(mysqli_query($dbc, $q_mua));
+                                echo $r_mua . " Khách";
+                                ?>
+
+                            )</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                           aria-controls="profile">Thuê</a>
+                    <li class="nav-item col-md-3">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#thue" role="tab"
+                           aria-controls="profile" style="background-color: #007bff; color: #fff;">Thuê (
+                            <?php
+                            if (isset($_POST['submit'], $_POST['thang'])) {
+
+                                $thang = $_POST['thang'];
+                                $thang < 10 ? $thang = "0" . $thang : $thang = $thang;
+
+                                $q_thue = "SELECT id_KH FROM khachhang WHERE loaikhach = 1 AND MONTH(ngay_them) = $thang";
+
+                            }else {
+                                $q_mua = "SELECT id_KH FROM khachhang WHERE loaikhach = 1";
+                            }
+                            $r_thue = mysqli_num_rows(mysqli_query($dbc, $q_mua));
+                            echo $r_thue . " Khách";
+                            ?>
+                            )</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                           aria-controls="profile">Chuyển Nhưỡng</a>
+                    <li class="nav-item col-md-3">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#chuyen" role="tab"
+                           aria-controls="profile" style="background-color: #1e7e34; color: #fff;">Chuyển Nhượng (
+                            <?php
+                            if (isset($_POST['submit'], $_POST['thang'])) {
+
+                                $thang = $_POST['thang'];
+                                $thang < 10 ? $thang = "0" . $thang : $thang = $thang;
+
+                                $q_chuyen = "SELECT id_KH FROM khachhang WHERE loaikhach = 2 AND MONTH(ngay_them) = $thang";
+
+                            }else {
+                                $q_mua = "SELECT id_KH FROM khachhang WHERE loaikhach = 2";
+                            }
+                            $r_chuyen = mysqli_num_rows(mysqli_query($dbc, $q_mua));
+                            echo $r_chuyen;
+                            ?>
+                            )</a>
+                    </li>
+                    <li class="nav-item col-md-3">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#chuacs" role="tab"
+                           aria-controls="profile" style="background-color: #1e7e34; color: #fff;">Chưa Chăm Sóc (
+                           <?php
+                            $q_mua = "SELECT id_KH FROM khachhang WHERE cs = 0";
+                            $r_chuyen = mysqli_num_rows(mysqli_query($dbc, $q_mua));
+                            echo $r_chuyen;
+                            ?>
+                            )</a>
                     </li>
                 </ul>
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
 
-                        
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="mua" role="tabpanel" aria-labelledby="home-tab"
+                         style="padding: 10px;">
+
+                        <?php
+                        if (isset($_POST['submit'], $_POST['thang'])) {
+
+                            $thang = $_POST['thang'];
+                            $thang < 10 ? $thang = "0" . $thang : $thang = $thang;
+
+                            $q = "SELECT kh.ten_KH, kh.id_KH, kh.loaikhach, kh.sdt_KH, kh.ttthem_KH, nv.ten_NV, csmn.csNgay, csmn.csTuongTac, csmn.csPhanHoi
+                                      FROM csMoiNhat csmn
+                                      INNER JOIN khachhang kh ON csmn.id_KH = kh.id_KH
+                                      INNER JOIN nhanvien nv ON csmn.id_NV = nv.id_NV
+                                      WHERE kh.loaikhach = 0 AND MONTH(csmn.csNgay) = {$thang}
+                                      ORDER BY csmn.csNgay DESC LIMIT $from, $display";
+
+                        } else {
+                            $q = "SELECT kh.ten_KH, kh.id_KH, kh.loaikhach, kh.sdt_KH, kh.ttthem_KH, nv.ten_NV,  csmn.csNgay, csmn.csTuongTac, csmn.csPhanHoi
+                                      FROM khachhang kh
+                                      INNER JOIN csMoiNhat csmn ON csmn.id_KH = kh.id_KH
+                                      INNER JOIN nhanvien nv ON csmn.id_NV = nv.id_NV
+                                      WHERE kh.loaikhach = 0
+                                      ORDER BY csmn.csNgay DESC LIMIT $from, $display";
+                        }
+
+                        $r = mysqli_query($dbc, $q);
+                        confirm_query($r, $q); ?>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Ngày:</th>
+                                    <th>Nhân Viên:</th>
+                                    <th>Khách Hàng:</th>
+                                    <th>SĐT Khách</th>
+                                    <th>Nhu Cầu</th>
+                                    <th>Phản Hồi:</th>
+                                </tr>
+                                <?php $stt1 = 1; while ($row = mysqli_fetch_array($r)): ?>
+
+                                    <tr <?php if($row['loaikhach'] == 4) echo "class = 'khach-bo'" ?>>
+                                        <td><?php echo $stt1; ?></td>
+                                        <td>
+                                            <?php
+                                                $phpdate = strtotime( $row['csNgay'] );
+                                                echo $mysqldate = date( 'd-m-Y H:i:s', $phpdate );
+                                              ?>
+                                        </td>
+                                        <td><?php echo $row['ten_NV'] ?></td>
+                                        <td><?php echo "<a href='chitiet_cskh.php?id_nv={$id_nv}&id_kh={$row['id_KH']}' style='color: #5706FF;'> {$row['ten_KH']} </a>"?></td>
+                                        <td><?php echo "0". $row['sdt_KH'] ?></td>
+                                        <td><?php echo $row['ttthem_KH'] ?></td>
+                                        <td><?php echo $row['csPhanHoi'] ?></td>
+                                    </tr>
+                                <?php $stt1++;  endwhile; ?>
+                            </table>
+
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <?php
+                                    //lay tong so tin
+                                    $ts_tin = "SELECT td.id_tiendo 
+                                                FROM tiendo td
+                                                INNER JOIN khachhang kh ON kh.id_KH = td.id_KH
+                                                WHERE kh.loaikhach= 2";
+                                    $trang = mysqli_query($dbc, $ts_tin);
+                                    confirm_query($trang, $ts_tin);
+
+                                    $ts_tin = mysqli_num_rows($trang);
+                                    $soTrang = ceil($ts_tin / $display);
+                                    for ($i = 1; $i <= $soTrang; $i++) {
+                                        echo "<li class='page-item'><a class='page-link' href='admin.php?trang={$i}'>{$i}</a></li>";
+
+                                    }
+                                    ?>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
 
+                    <div class="tab-pane fade" id="thue" role="tabpanel" aria-labelledby="profile-tab" style="padding: 10px;">
+
+                        <?php
+                        if (isset($_POST['submit'], $_POST['thang'])) {
+
+                            $thang = $_POST['thang'];
+                            $thang < 10 ? $thang = "0" . $thang : $thang = $thang;
+
+                            $q = "SELECT kh.ten_KH, kh.id_KH, kh.sdt_KH, kh.ttthem_KH, nv.ten_NV, csmn.csNgay, csmn.csTuongTac, csmn.csPhanHoi
+                                      FROM csMoiNhat csmn
+                                      INNER JOIN khachhang kh ON csmn.id_KH = kh.id_KH
+                                      INNER JOIN nhanvien nv ON csmn.id_NV = nv.id_NV
+                                      WHERE kh.loaikhach = 1 AND MONTH(csmn.csNgay) = {$thang}
+                                      ORDER BY csmn.csNgay DESC LIMIT $from, $display";
+
+                        } else {
+                            $q = "SELECT kh.ten_KH, kh.id_KH, kh.sdt_KH, kh.ttthem_KH, nv.ten_NV, csmn.csNgay, csmn.csTuongTac, csmn.csPhanHoi
+                                      FROM khachhang kh
+                                      INNER JOIN csMoiNhat csmn ON csmn.id_KH = kh.id_KH
+                                      INNER JOIN nhanvien nv ON csmn.id_NV = nv.id_NV
+                                      WHERE kh.loaikhach = 1
+                                      ORDER BY csmn.csNgay DESC LIMIT $from, $display";
+                        }
+
+                        $r = mysqli_query($dbc, $q);
+                        confirm_query($r, $q); ?>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Ngày</th>
+                                    <th>Nhân Viên</th>
+                                    <th>Khách Hàng</th>
+                                    <th>SĐT Khách</th>
+                                    <th>Nhu Cầu</th>
+                                    <th>Phản Hồi</th>
+                                </tr>
+                                <?php $stt = 1; while ($row = mysqli_fetch_array($r)): ?>
+
+                                    <tr>
+                                        <td><?php echo $stt; ?></td>
+                                        <td>
+                                            <?php
+                                                $phpdate = strtotime( $row['csNgay'] );
+                                                echo $mysqldate = date( 'd-m-Y H:i:s', $phpdate );
+                                            ?>
+                                        </td>
+                                        <td><?php echo $row['ten_NV'] ?></td>
+                                        <td><?php echo "<a href='chitiet_cskh.php?id_nv={$id_nv}&id_kh={$row['id_KH']}' style='color: #5706FF;'> {$row['ten_KH']} </a>"?></td>
+                                        <td><?php echo "0". $row['sdt_KH'] ?></td>
+                                        <td><?php echo $row['ttthem_KH'] ?></td>
+                                        <td><?php echo $row['csPhanHoi'] ?></td>
+                                    </tr>
+                                <?php $stt++;  endwhile; ?>
+                            </table>
+
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <?php
+                                    //lay tong so tin
+                                    $ts_tin = "SELECT td.id_tiendo 
+                                                FROM tiendo td
+                                                INNER JOIN khachhang kh ON kh.id_KH = td.id_KH
+                                                WHERE kh.loaikhach= 2";
+                                    $trang = mysqli_query($dbc, $ts_tin);
+                                    confirm_query($trang, $ts_tin);
+
+                                    $ts_tin = mysqli_num_rows($trang);
+                                    $soTrang = ceil($ts_tin / $display);
+                                    for ($i = 1; $i <= $soTrang; $i++) {
+                                        echo "<li class='page-item'><a class='page-link' href='admin.php?trang={$i}'>{$i}</a></li>";
+
+                                    }
+                                    ?>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="chuyen" role="tablist" style="padding: 10px;">
+                        <?php
+                        if (isset($_POST['submit'], $_POST['thang'])) {
+
+                            $thang = $_POST['thang'];
+                            $thang < 10 ? $thang = "0" . $thang : $thang = $thang;
+
+                            $q = "SELECT kh.ten_KH, kh.id_KH, kh.sdt_KH, kh.ttthem_KH, nv.ten_NV, csmn.csNgay, csmn.csTuongTac, csmn.csPhanHoi
+                                      FROM csMoiNhat csmn
+                                      INNER JOIN khachhang kh ON csmn.id_KH = kh.id_KH
+                                      INNER JOIN nhanvien nv ON csmn.id_NV = nv.id_NV
+                                      WHERE kh.loaikhach = 2 AND MONTH(csmn.csNgay) = {$thang}
+                                      ORDER BY csmn.csNgay DESC LIMIT $from, $display";
+
+                        } else {
+                            $q = "SELECT kh.ten_KH, kh.id_KH, kh.sdt_KH, kh.ttthem_KH, nv.ten_NV, csmn.csNgay, csmn.csTuongTac, csmn.csPhanHoi
+                                      FROM khachhang kh
+                                      INNER JOIN csMoiNhat csmn ON csmn.id_KH = kh.id_KH
+                                      INNER JOIN nhanvien nv ON csmn.id_NV = nv.id_NV
+                                      WHERE kh.loaikhach = 2
+                                      ORDER BY csmn.csNgay DESC LIMIT $from, $display";
+                        }
+
+                        $r = mysqli_query($dbc, $q);
+                        confirm_query($r, $q); ?>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Ngày</th>
+                                    <th>Nhân Viên</th>
+                                    <th>Khách Hàng</th>
+                                    <th>SĐT Khách</th>
+                                    <th>Nhu Cầu</th>
+                                    <th>Phản Hồi</th>
+                                </tr>
+                                <?php $stt2 =1; while ($row = mysqli_fetch_array($r)): ?>
+
+                                    <tr>
+                                        <td><?php echo $stt2; ?></td>
+                                        <td><?php
+                                            $phpdate = strtotime( $row['csNgay'] );
+                                            echo $mysqldate = date( 'd-m-Y H:i:s', $phpdate );
+                                            ?></td>
+                                        <td><?php echo $row['ten_NV'] ?></td>
+                                        <td><?php echo "<a href='chitiet_cskh.php?id_nv={$id_nv}&id_kh={$row['id_KH']}' style='color: #5706FF;'> {$row['ten_KH']} </a>"?></td>
+                                        <td><?php echo "0". $row['sdt_KH'] ?></td>
+                                        <td><?php echo $row['ttthem_KH'] ?></td>
+                                        <td><?php echo $row['csPhanHoi'] ?></td>
+                                    </tr>
+                                <?php $stt2++;  endwhile; ?>
+                            </table>
+
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <?php
+                                    //lay tong so tinidVTTDung
+                                    $ts_tin = "SELECT td.id_tiendo 
+                                                FROM tiendo td
+                                                INNER JOIN khachhang kh ON kh.id_KH = td.id_KH
+                                                WHERE kh.loaikhach= 2";
+                                    $trang = mysqli_query($dbc, $ts_tin);
+                                    confirm_query($trang, $ts_tin);
+
+                                    $ts_tin = mysqli_num_rows($trang);
+                                    $soTrang = ceil($ts_tin / $display);
+                                    for ($i = 1; $i <= $soTrang; $i++) {
+                                        echo "<li class='page-item'><a class='page-link' href='admin.php?trang={$i}'>{$i}</a></li>";
+
+                                    }
+                                    ?>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="chuacs" role="tablist" style="padding: 10px;">
+                        <?php
+                            $q = "SELECT *
+                                      FROM khachhang
+                                      WHERE cs = 0
+                                      ORDER BY id_KH DESC LIMIT $from, $display";
+                            $r = mysqli_query($dbc, $q);
+                            confirm_query($r, $q); ?>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Ngày</th>
+                                    <th>Khách Hàng</th>
+                                    <th>SĐT Khách</th>
+                                    <th>Nhu Cầu</th>
+                                </tr>
+                                <?php $stt2 =1; while ($row = mysqli_fetch_array($r)): ?>
+
+                                    <tr>
+                                        <td><?php echo $stt2; ?></td>
+                                        <td><?php
+                                            $phpdate = strtotime( $row['ngay_them'] );
+                                            echo $mysqldate = date( 'd-m-Y H:i:s', $phpdate );
+                                            ?></td>
+                                        <td><?php echo "<a href='chitiet_cskh.php?id_nv={$id_nv}&id_kh={$row['id_KH']}' style='color: #5706FF;'> {$row['ten_KH']} </a>"?></td>
+                                        <td><?php echo "0". $row['sdt_KH'] ?></td>
+                                        <td><?php echo $row['ttthem_KH'] ?></td>
+                                    </tr>
+                                    <?php $stt2++;  endwhile; ?>
+                            </table>
+
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <?php
+                                    //lay tong so tin
+                                    $ts_tin = "SELECT id_KH FROM khachhang WHERE cs = 0";
+                                    $trang = mysqli_query($dbc, $ts_tin);
+                                    confirm_query($trang, $ts_tin);
+
+                                    $ts_tin = mysqli_num_rows($trang);
+                                    $soTrang = ceil($ts_tin / $display);
+                                    for ($i = 1; $i <= $soTrang; $i++) {
+                                        echo "<li class='page-item'><a class='page-link' href='admin.php?trang={$i}'>{$i}</a></li>";
+
+                                    }
+                                    ?>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
 
                 </div>
-                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-                <div class="tab-pane fade" id="dropdown1" role="tabpanel" aria-labelledby="dropdown1-tab">...</div>
-                <div class="tab-pane fade" id="dropdown2" role="tabpanel" aria-labelledby="dropdown2-tab">...</div>
             </div>
-
 
         </div>
     </div>
-
-    <?php
-    $display = 20;
-
-    //phan trang
-    if (isset($_GET['trang']) && filter_var($_GET['trang'], FILTER_VALIDATE_INT, array('min-range' => 1))) {
-        $from = ($_GET['trang'] - 1) * $display;
-    } else {
-        $from = 0;
-    }
-
-    if (isset($_POST['submit'], $_POST['thang'])) {
-        //khong chon laoi khach hang
-        if ($_POST['loai-kh'] == 0) {
-            $q = "SELECT kh.ten_KH, nv.ten_NV, td.date, td.tuong_tac, td.phan_hoi
-        FROM khachhang kh
-        INNER JOIN tiendo td ON td.id_KH = kh.id_KH
-        INNER JOIN nhanvien nv ON td.id_NV = nv.id_NV
-        ORDER BY td.date DESC LIMIT $from, $display";
-        }
-        //so sanh voi loai khach hang
-        $idLoaikhachhang = $_POST['loai-kh'];
-
-        $thang = $_POST['thang'];
-        $thang < 10 ? $thang = "0" . $thang : $thang = $thang;
-        $q = "SELECT kh.ten_KH, nv.ten_NV, td.date, td.tuong_tac, td.phan_hoi, lkh.tenLoaikhachhang
-      FROM khachhang kh
-      INNER JOIN tiendo td ON td.id_KH = kh.id_KH
-      INNER JOIN nhanvien nv ON td.id_NV = nv.id_NV
-      INNER JOIN loaikhachhang lkh ON kh.idLoaikhachhang = lkh.idLoaikhachhang
-      WHERE kh.idLoaikhachhang = {$idLoaikhachhang}
-      AND MONTH(td.date) = {$thang}
-      ORDER BY td.date DESC LIMIT $from, $display";
-    } else {
-        $q = "SELECT kh.ten_KH, nv.ten_NV, td.date, td.tuong_tac, td.phan_hoi
-      FROM khachhang kh
-      INNER JOIN tiendo td ON td.id_KH = kh.id_KH
-      INNER JOIN nhanvien nv ON td.id_NV = nv.id_NV
-      ORDER BY td.date DESC LIMIT $from, $display";
-    }
-
-    $r = mysqli_query($dbc, $q);
-    confirm_query($r, $q); ?>
-
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <tr>
-                <th style="background-color: #1e7e34; color: #ffffff;">Ngày:</th>
-                <th style="background-color: #1e7e34; color: #ffffff;">Nhân Viên:</th>
-                <th style="background-color: #1e7e34; color: #ffffff;">Khách Hàng:</th>
-                <th style="background-color: #007bff; color: #ffffff;">Tương Tác:</th>
-                <th style="background-color: #6c757d; color: #ffffff;">Phản Hồi:</th>
-            </tr>
-            <?php while ($row = mysqli_fetch_array($r)): ?>
-
-                <tr>
-                    <td style="background-color: #1e7e34; color: #ffffff;"><?php echo $row['date'] ?></td>
-                    <td style="background-color: #1e7e34; color: #ffffff;"><?php echo $row['ten_NV'] ?></td>
-                    <td style="background-color: #1e7e34; color: #ffffff;"><?php echo $row['ten_KH'] ?></td>
-                    <td style="background-color: #007bff;  color: #ffffff;"><?php echo $row['tuong_tac'] ?></td>
-                    <td style="background-color: #6c757d; color: #ffffff;"><?php echo $row['phan_hoi'] ?></td>
-                </tr>
-            <?php endwhile; ?>
-        </table>
-
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <?php
-                //lay tong so tin
-                $ts_tin = "SELECT id_tiendo FROM tiendo";
-                $trang = mysqli_query($dbc, $ts_tin);
-                confirm_query($trang, $ts_tin);
-
-                $ts_tin = mysqli_num_rows($trang);
-                $soTrang = ceil($ts_tin / $display);
-                for ($i = 1; $i <= $soTrang; $i++) {
-                    echo "<li class='page-item'><a class='page-link' href='admin.php?trang={$i}'>{$i}</a></li>";
-
-                }
-                ?>
-            </ul>
-        </nav>
-    </div>
-</div>
-</div><!--/.content-admin-->
 </div>
 <?php include "includes/footer.php"; ?>

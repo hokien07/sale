@@ -1,7 +1,6 @@
 <?php
     session_start();
     header('Content-Type: text/html; charset=UTF-8');
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -14,6 +13,13 @@
     <?php include"font.php"; ?>
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/style.css">
-
+    <script type="text/javascript">
+      $(document).ready(function() {
+        setInterval(
+        function (){
+          $('#load').load('record_count.php').fadeIn("slow");
+        }, 1000);
+      });
+    </script>
 </head>
 <body>

@@ -1,9 +1,3 @@
-<?php
-if(isset($_SESSION)){
-    header('location:admin.php');
-}
-
-?>
 <?php include"includes/header.php";?>
 <?php include('includes/mysqli_connect.php'); ?>
 <?php include('includes/function.php'); ?>
@@ -12,11 +6,6 @@ if(isset($_SESSION)){
     <div class="content_index">
 
         <?php
-
-            /*if(isset($_SESSION)) {
-                header("location:admin.php");
-            }*/
-
             if(isset($_POST['dang-nhap'])) {
                 $email = mysqli_real_escape_string($dbc, $_POST['email']);
                 $mat_khau = mysqli_real_escape_string($dbc, $_POST['matkhau']);
@@ -42,7 +31,7 @@ if(isset($_SESSION)){
                     if($_SESSION['dang_nhap']['loai_user'] == 1){
                         header("location:admin.php");
                     }else {
-                        header("location:chamsockhachhang.php");
+                        header("location:nv_tongquan.php");
                     }
 
                 }

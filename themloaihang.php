@@ -67,6 +67,8 @@ if(empty($_SESSION)) {
 
             if (mysqli_affected_rows($dbc) == 1) {
               $mes = "<p class='success'>Thêm Nhân Viên Thành Công!</p>";
+                sleep(5);
+                header("Location: danhsachloaihangphp");
             } else {
               $mes = "<p class='warning'>Thêm Nhân Viên Không Thành Công. Vui lòng kiểm tra lại.</p>";
             }
@@ -157,4 +159,5 @@ if(empty($_SESSION)) {
     </div>
   </div>
 </div>
+
 <?php include "includes/footer.php"; ?>

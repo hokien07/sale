@@ -8,13 +8,12 @@ if(empty($_SESSION)) {
 }
 
 ?>
-<div class="container">
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <?php include "includes/sidebar.php"; ?>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-9">
             <div class="them-nhan-vien">
                 <div class="content"><!--form thêm nhân viên-->
                     <?php
@@ -70,20 +69,23 @@ if(empty($_SESSION)) {
                             if (empty($errors)) {
                                 //them khach hang vao bang khach hang.
                                 $q = "INSERT INTO khachChot 
-                                        ( ten_NV,
-                                          ten_KH, 
-                                          sdt_KH, 
-                                          email_KH, 
-                                          canho, 
-                                          mailchunha, 
-                                          dtchunha, 
-                                          phithuve, 
-                                          ngaylamhopdong, 
-                                          ngaynhantien, 
-                                          ngayketthuchopdong
+                                        (
+                                        date,  
+                                        ten_NV,
+                                        ten_KH, 
+                                        sdt_KH, 
+                                        email_KH, 
+                                        canho, 
+                                        mailchunha, 
+                                        dtchunha, 
+                                        phithuve, 
+                                        ngaylamhopdong, 
+                                        ngaynhantien, 
+                                        ngayketthuchopdong
                                         ) 
                                       VALUES 
                                         (
+                                          NOW(), 
                                         '{$ten_nv}',
                                         '{$ten_kh}',
                                         '{$sdt}',
@@ -98,24 +100,24 @@ if(empty($_SESSION)) {
                                         )";
                                 $r = mysqli_query($dbc, $q);
                                 confirm_query($r, $q);
+                                
+                                //cap nhat lai loai khach hang
+                                $q_capnhat = "UPDATE khachhang SET loaikhach = 3 WHERE id_KH = $id_kh";
+                                $r_capnhat = mysqli_query($dbc, $q_capnhat);
+                                confirm_query($r_capnhat, $q_capnhat);
 
                                 //cap nhat vao log.
                                 $id_nv = $_SESSION['dang_nhap']['id_NV'];
                                 $q_log = "INSERT INTO Log (id_NV, ngay, ghi_chu)  
-                                          VALUES ($id_nv, NOW(), 'chốt khách hàng: {$ten_kh}') và xóa khác hàng: {$ten_kh}";
+                                          VALUES ($id_nv, NOW(), 'chốt khách hàng: {$ten_kh}')";
                                 $r_log = mysqli_query($dbc, $q_log);
                                 confirm_query($r_log,$q_log);
-
-
-                                //delete khach hang khoi danh sach khach hang.
-                                $q_dkh = "DELETE FROM khachhang WHERE id_KH = {$id_kh} LIMIT 1";
-                                $r_dkh= mysqli_query($dbc, $q_dkh);
-                                confirm_query($r, $q);
 
 
                                 //kiem tra xem da them thnanh cong
                                 if (mysqli_affected_rows($dbc) == 1) {
                                     $mes = "<p class='success'>Chốt Thành Công!</p>";
+                                    header("location:chamsockhachhang.php");
                                 } else {
                                     $mes = "<p class='warning'>Chốt Không Thành Công. Vui lòng kiểm tra lại.</p>";
                                 }
@@ -191,45 +193,52 @@ if(empty($_SESSION)) {
                                    class="form-control" value="<?php if(isset($_POST['phi-thu-ve']))echo  strip_tags($_POST['phi-thu-ve']) ?>">
                         </div>
 
-                        <div class="form-group">
-                            <label for="ngay-lam-hop-dong">Ngày làm hợp đồng
-                                <?php
-                                if (isset($errors) && in_array("ngay-lam-hop-dong", $errors, true)) {
-                                    echo "<p class='warning'>Vui lòng nhập thông tin</p>";
-                                }
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="ngay-lam-hop-dong">Ngày làm hợp đồng
+                                        <?php
+                                        if (isset($errors) && in_array("ngay-lam-hop-dong", $errors, true)) {
+                                            echo "<p class='warning'>Vui lòng nhập thông tin</p>";
+                                        }
 
-                                ?>
-                            </label>
-                            <input type="date" name="ngay-lam-hop-dong" id="ngay-lam-hop-dong"
-                                   class="form-control" value="<?php if(isset($_POST['ngay-lam-hop-dong']))echo  strip_tags($_POST['ngay-lam-hop-dong']) ?>">
+                                        ?>
+                                    </label>
+                                    <input type="date" data-date="" dateformat="d M y" name="ngay-lam-hop-dong" id="ngay-lam-hop-dong"
+                                           class="form-control" value="<?php if(isset($_POST['ngay-lam-hop-dong']))echo  strip_tags($_POST['ngay-lam-hop-dong']) ?>">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="ngay-nhan-tien">Ngày nhận tiền
+                                        <?php
+                                        if (isset($errors) && in_array("ngay-nhan-tien", $errors, true)) {
+                                            echo "<p class='warning'>Vui lòng nhập thông tin</p>";
+                                        }
+
+                                        ?>
+                                    </label>
+                                    <input type="date" name="ngay-nhan-tien" id="ngay-nhan-tien"
+                                           class="form-control" value="<?php if(isset($_POST['ngay-nhan-tien']))echo  strip_tags($_POST['ngay-nhan-tien']) ?>">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="ngay-ket-thuc-hop-dong">Ngày kết thúc hợp đồng
+                                        <?php
+                                        if (isset($errors) && in_array("ngay-ket-thuc-hop-dong", $errors, true)) {
+                                            echo "<p class='warning'>Vui lòng nhập thông tin</p>";
+                                        }
+
+                                        ?>
+                                    </label>
+                                    <input type="date" name="ngay-ket-thuc-hop-dong" id="ngay-ket-thuc-hop-dong"
+                                           class="form-control" value="<?php if(isset($_POST['úcngay-ket-thuc-hop-dong']))echo  strip_tags($_POST['ngay-ket-thuc-hop-dong']) ?>">
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="ngay-nhan-tien">Ngày nhận tiền
-                                <?php
-                                if (isset($errors) && in_array("ngay-nhan-tien", $errors, true)) {
-                                    echo "<p class='warning'>Vui lòng nhập thông tin</p>";
-                                }
-
-                                ?>
-                            </label>
-                            <input type="date" name="ngay-nhan-tien" id="ngay-nhan-tien"
-                                   class="form-control" value="<?php if(isset($_POST['ngay-nhan-tien']))echo  strip_tags($_POST['ngay-nhan-tien']) ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="ngay-ket-thuc-hop-dong">Ngày kết thúc hợp đồng
-                                <?php
-                                if (isset($errors) && in_array("ngay-ket-thuc-hop-dong", $errors, true)) {
-                                    echo "<p class='warning'>Vui lòng nhập thông tin</p>";
-                                }
-
-                                ?>
-                            </label>
-                            <input type="date" name="ngay-ket-thuc-hop-dong" id="ngay-ket-thuc-hop-dong"
-                                   class="form-control" value="<?php if(isset($_POST['úcngay-ket-thuc-hop-dong']))echo  strip_tags($_POST['ngay-ket-thuc-hop-dong']) ?>">
-                        </div>
-
                         <input type="submit" name="submit" class="btn btn-lg btn-info" value="Chốt Khách Hàng">
 
                     </form>
@@ -237,5 +246,4 @@ if(empty($_SESSION)) {
             </div>
         </div>
     </div>
-</div>
 <?php include "includes/footer.php"; ?>

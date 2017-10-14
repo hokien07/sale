@@ -18,66 +18,67 @@ if (empty($_SESSION)) {
     <div class="col-md-9">
         <div class="content">
             <div class="khachhang-moi">
-            <h2 style="text-transform: uppercase; text-align: center; padding-top: 20px; font-weight: bold; padding-bottom: 20px">
-                Trang khách hàng đã chốt</h2>
+                <h2 style="text-transform: uppercase; text-align: center; padding-top: 20px; font-weight: bold; padding-bottom: 20px">
+                    Trang khách hàng đã chốt</h2>
 
-            <?php
-            //chức năng lấy thông tin khách hàng đã chốt
-            /*if(isset($_POST['tt-khach'])) {
-                $q_ttk = "SELECT ten_kh, email_kh, sdt_kh
-                            FROM khachChot
-                            ORDER BY idChot DESC";
-                $r_ttk = mysqli_query($dbc, $q_ttk);
-                confirm_query($r_ttk, $q_ttk);
+                <?php
+                //chức năng lấy thông tin khách hàng đã chốt
+                /*if(isset($_POST['tt-khach'])) {
+                    $q_ttk = "SELECT ten_kh, email_kh, sdt_kh
+                                FROM khachChot
+                                ORDER BY idChot DESC";
+                    $r_ttk = mysqli_query($dbc, $q_ttk);
+                    confirm_query($r_ttk, $q_ttk);
 
-                while($ttk = mysqli_fetch_array($r_ttk)) {
-                    echo $ttk['ten_kh'];
-                }
-            }*/
+                    while($ttk = mysqli_fetch_array($r_ttk)) {
+                        echo $ttk['ten_kh'];
+                    }
+                }*/
 
-            ?>
-
-
-            <!--Loc ngày và loại khách hàng-->
-            <form method="post">
-                <div class="row">
-                    <div class="col-md-8">
-                        <select name="thang" id="thang"
-                                style="width: 100%; height: 40px; background-color: #1e7e34; color: #fff; ">
-                            <option value="0">Chọn Tháng</option>
-                            <?php
-
-                            $thang = 1;
-                            while ($thang <= 12) {
-                                echo "<option value='{$thang}'";
-                                if (isset($_POST['thang']) && $_POST['thang'] == $thang)
-                                    echo "selected = 'selected'";
-                                echo ">Tháng {$thang}</option>";
-                                $thang++;
-                            }
-                            ?>
-
-                            ?>
-                        </select>
-
-                    </div>
+                ?>
 
 
-                    <div class="col-md-4">
-                        <input type="submit" name="submit" id="khach-chot" value="Chọn"
-                               style="width: 100%; height: 40px; background-color: #1e7e34; color: #fff; margin-left: -15px; margin-bottom: 20px;">
-                    </div>
-                    <!--//submit lay thong tin khac da chot
-                    <div class="col-md-4">
-                        <input type="submit" name="tt-khach" id="tt-khach" value="Lấy thông tin khách"
-                               style="width: 100%; height: 40px; background-color: #007bff; color: #fff; margin-left: -15px; margin-bottom: 20px;">
-                    </div>
-                    -->
-            </form>
-        </div>
+                <!--Loc ngày và loại khách hàng-->
+                <form method="post">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <select name="thang" id="thang"
+                                    style="width: 100%; height: 40px; background-color: #1e7e34; color: #fff; ">
+                                <option value="0">Chọn Tháng</option>
+                                <?php
+
+                                $thang = 1;
+                                while ($thang <= 12) {
+                                    echo "<option value='{$thang}'";
+                                    if (isset($_POST['thang']) && $_POST['thang'] == $thang)
+                                        echo "selected = 'selected'";
+                                    echo ">Tháng {$thang}</option>";
+                                    $thang++;
+                                }
+                                ?>
+
+                                ?>
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <input type="submit" name="submit" id="khach-chot" value="Chọn"
+                                   style="width: 100%; height: 40px; background-color: #1e7e34; color: #fff; margin-left: -15px; margin-bottom: 20px;">
+                        </div>
+                        <!--//submit lay thong tin khac da chot
+                        <div class="col-md-4">
+                            <input type="submit" name="tt-khach" id="tt-khach" value="Lấy thông tin khách"
+                                   style="width: 100%; height: 40px; background-color: #007bff; color: #fff; margin-left: -15px; margin-bottom: 20px;">
+                        </div>
+                        -->
+                </form>
+            </div>
             <?php
             $display = 20;
             $ten_nv = $_SESSION['dang_nhap']['ten_NV'];
+            $id_nv = $_SESSION['dang_nhap']['id_NV'];
 
             if (isset($_GET['trang']) && filter_var($_GET['trang'], FILTER_VALIDATE_INT, array('min-range' => 1))) {
                 $from = ($_GET['trang'] - 1) * $display;
@@ -92,11 +93,12 @@ if (empty($_SESSION)) {
 
                 $q = "SELECT *
                   FROM khachChot
-                  WHERE MONTH(date) = {$thang} 
+                  WHERE MONTH(date) = {$thang}  AND id_NV = $id_nv
                   ORDER BY idChot DESC LIMIT $from, $display";
             } else {
                 $q = "SELECT *
                   FROM khachChot
+                  WHERE id_NV = $id_nv
                   ORDER BY idChot DESC LIMIT $from, $display";
             }
 
@@ -105,7 +107,7 @@ if (empty($_SESSION)) {
 
             <?php
             //tinh tỏng phí thu:
-            $q_tongthu = "SELECT phithuve FROM khachChot";
+            $q_tongthu = "SELECT phithuve FROM khachChot WHERE id_NV = $id_nv";
             $r_tongthu = mysqli_query($dbc, $q_tongthu);
             confirm_query($r_tongthu, $q_tongthu);
             $tongs = 0;
@@ -116,7 +118,7 @@ if (empty($_SESSION)) {
             echo "<p style='color: #47cacd; width: 30%; float: left;'> Số Khách Chốt: " . mysqli_num_rows($r_tongthu) . "</p>";
 
             if (isset($_POST['thang'])) {
-                $q_tongthu_thang = "SELECT phithuve FROM khachChot WHERE MONTH(date)";
+                $q_tongthu_thang = "SELECT phithuve FROM khachChot WHERE MONTH(date) AND  id_NV = $id_nv";
                 $r_tongthu_thang = mysqli_query($dbc, $q_tongthu);
                 confirm_query($r_tongthu_thang, $q_tongthu_thang);
                 $tong_thang = 0;
@@ -186,12 +188,12 @@ if (empty($_SESSION)) {
                             <td><?php
                                 $phpdate = strtotime( $row['ngaylamhopdong'] );
                                 echo $mysqldate = date( 'd-m-Y H:i:s', $phpdate );
-                               ?>
+                                ?>
                             </td>
                             <td><?php
                                 $phpdate = strtotime( $row['ngaynhantien'] );
                                 echo $mysqldate = date( 'd-m-Y H:i:s', $phpdate );
-                               ?>
+                                ?>
                             </td>
                             <td><?php
                                 $phpdate = strtotime( $row['ngayketthuchopdong'] );
@@ -220,9 +222,9 @@ if (empty($_SESSION)) {
                 </nav>
             </div>
         </div>
-        </div>
-
     </div>
+
+</div>
 </div>
 
 <?php include "includes/footer.php"; ?>

@@ -297,7 +297,8 @@ section{
 }
 
 /*Top Header*/
-.top-header .container{
+.top-header{
+    margin: -15px;
     background-color: #007bff;
     border-color: #007bff;
     color: #fff;
@@ -321,9 +322,11 @@ section{
     margin-left: -15px;
 }
 
-.footer .container{
+.footer{
+    margin: -15px;
     background-color: #007bff;
     border-color: #007bff;
+    margin-top: 20px;
 }
 
 .footer ul {
@@ -422,6 +425,29 @@ th, td {
     border: none;
     text-align: left;
     padding: 8px;
+}
+
+.khach-mua, .khach-thue, .khach-chuyen, .khach-chot {
+    color: #fff;
+}
+.khach-mua {
+    background-color: rgba(11, 146, 147, 0.93);
+}
+.khach-thue {
+    background-color: #0c5460;
+}
+.khach-chuyen {
+    background-color: rgba(126, 103, 116, 0.88);
+}
+.khach-chot {
+    background-color: #8E7437;
+}
+.khach-bo {
+    background-color: #B8B8BB;
+
+}
+.khach-bo a {
+    color: #111;
 }
 
 /*start mobile frond-end*/
